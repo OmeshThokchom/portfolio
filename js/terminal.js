@@ -27,12 +27,14 @@ class Terminal {
     handleKeydown(e) {
         if (e.key === 'Enter') {
             const command = this.terminalInput.value.trim().toLowerCase();
+            const currentPrompt = document.createElement('div');
+            currentPrompt.innerHTML = `<span class="flex"><span class="terminal-user">omesh</span><span class="terminal-at">@</span><span class="terminal-hostname">dev</span><span class="terminal-path">:~$</span> ${this.terminalInput.value}</span>`;
+            this.terminalOutput.appendChild(currentPrompt);
+            
             if (command) {
                 this.commandHistory.push(command);
                 this.historyIndex = this.commandHistory.length;
                 this.executeCommand(command);
-            } else {
-                this.addNewPrompt();
             }
             this.terminalInput.value = '';
         }
@@ -56,22 +58,13 @@ class Terminal {
         }
     }
 
-    addNewPrompt() {
-        const prompt = document.createElement('div');
-        prompt.innerHTML = `<span class="flex"><span class="terminal-user">omesh</span><span class="terminal-at">@</span><span class="terminal-hostname">dev</span><span class="terminal-path">:~$</span></span>`;
-        this.terminalOutput.appendChild(prompt);
-        this.scrollToBottom();
-    }
-
-    executeCommand(command) {
-        const output = document.createElement('div');
-        output.innerHTML = `<span class="flex"><span class="terminal-user">omesh</span><span class="terminal-at">@</span><span class="terminal-hostname">dev</span><span class="terminal-path">:~$</span> ${command}</span>`;
-        
-        const commandOutput = document.createElement('div');
-        commandOutput.innerHTML = this.getCommandOutput(command);
-        
-        this.terminalOutput.appendChild(output);
-        this.terminalOutput.appendChild(commandOutput);
+    async executeCommand(command) {
+        const result = await this.getCommandOutput(command);
+        if (result) {
+            const commandOutput = document.createElement('div');
+            commandOutput.innerHTML = result;
+            this.terminalOutput.appendChild(commandOutput);
+        }
         this.scrollToBottom();
     }
 

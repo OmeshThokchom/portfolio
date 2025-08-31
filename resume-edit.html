@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Resume - Omesh Thokchom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <style>
+        [contenteditable] {
+            outline: 2px solid transparent;
+            transition: outline-color 0.2s;
+        }
+        [contenteditable]:hover {
+            outline-color: #06b6d4;
+        }
+        [contenteditable]:focus {
+            outline: 2px solid #06b6d4;
+            background-color: rgba(6, 182, 212, 0.1);
+        }
+        .edited {
+            animation: flash 0.5s ease-in-out;
+        }
+        @keyframes flash {
+            0% { background-color: rgba(6, 182, 212, 0.2); }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
+            <h2 class="text-2xl font-bold text-neon-cyan mb-4">Enter Admin Password</h2>
+            <input type="password" id="admin-password" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="Enter password">
+            <div class="flex justify-end space-x-4">
+                <a href="resume.html" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</a>
+                <button onclick="verifyPassword()" class="bg-neon-blue text-white px-4 py-2 rounded">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Formatting Toolbar -->
+        <div id="formatting-toolbar" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 p-2 rounded-lg shadow-xl space-x-2 hidden z-50">
+            <button onclick="formatText('bold')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Bold">
+                <i class="fas fa-bold"></i>
+            </button>
+            <button onclick="formatText('italic')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Italic">
+                <i class="fas fa-italic"></i>
+            </button>
+            <button onclick="formatText('underline')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Underline">
+                <i class="fas fa-underline"></i>
+            </button>
+            <select onchange="changeTextColor(this.value)" class="bg-gray-700 px-2 py-1 rounded" title="Text Color">
+                <option value="text-white">White</option>
+                <option value="text-neon-blue">Neon Blue</option>
+                <option value="text-neon-purple">Neon Purple</option>
+                <option value="text-neon-cyan">Neon Cyan</option>
+                <option value="text-neon-pink">Neon Pink</option>
+            </select>
+            <select onchange="changeFontSize(this.value)" class="bg-gray-700 px-2 py-1 rounded" title="Font Size">
+                <option value="text-sm">Small</option>
+                <option value="text-base">Normal</option>
+                <option value="text-lg">Large</option>
+                <option value="text-xl">Extra Large</option>
+                <option value="text-2xl">2X Large</option>
+            </select>
+            <button onclick="undo()" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Undo">
+                <i class="fas fa-undo"></i>
+            </button>
+            <button onclick="redo()" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Redo">
+                <i class="fas fa-redo"></i>
+            </button>
+        </div>
+
+        <!-- Theme Selector -->
+        <div id="theme-selector" class="fixed top-4 left-4">
+            <select onchange="changeTheme(this.value)" class="bg-gray-700 px-4 py-2 rounded-lg">
+                <option value="theme-default">Default Theme</option>
+                <option value="theme-modern">Modern</option>
+                <option value="theme-minimal">Minimal</option>
+                <option value="theme-dark">Dark Neon</option>
+                <option value="theme-gradient">Gradient</option>
+            </select>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="fixed top-4 right-4 space-x-4">
+            <a href="resume.html" class="bg-neon-pink hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors">
+                View Resume
+            </a>
+            <button onclick="saveChanges()" class="bg-neon-cyan hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Save Changes
+            </button>
+        </div>
+
+        <!-- Resume Content -->
+        <div id="resume-content" class="bg-gray-800 p-8 rounded-lg shadow-xl mt-20" contenteditable="true">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-neon-cyan mb-2">Omesh Thokchom</h1>
+                <p class="text-lg text-gray-300">AI/ML Developer | B.Tech CSE Student</p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-pink mb-4">Contact Information</h2>
+                <div id="contact-info" class="grid grid-cols-2 gap-4">
+                    <p>📧 Email: your.email@example.com</p>
+                    <p>📱 Phone: Your Phone</p>
+                    <p>🌍 Location: Your Location</p>
+                    <p>💼 LinkedIn: Your LinkedIn</p>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-purple mb-4">Education</h2>
+                <div id="education-section" class="space-y-4">
+                    <div>
+                        <h3 class="text-xl font-semibold">B.Tech in Computer Science and Engineering</h3>
+                        <p class="text-gray-300">Your University</p>
+                        <p class="text-gray-400">2020 - 2024</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-cyan mb-4">Technical Skills</h2>
+                <div id="skills-section" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Programming Languages</h3>
+                        <ul class="list-disc list-inside text-gray-300">
+                            <li>Python</li>
+                            <li>JavaScript</li>
+                            <li>C++</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Technologies</h3>
+                        <ul class="list-disc list-inside text-gray-300">
+                            <li>TensorFlow</li>
+                            <li>PyTorch</li>
+                            <li>React</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-blue mb-4">Experience</h2>
+                <div id="experience-section" class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold">AI/ML Intern</h3>
+                        <p class="text-gray-300">Company Name</p>
+                        <p class="text-gray-400">June 2023 - August 2023</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>Implemented deep learning models for image classification</li>
+                            <li>Developed data preprocessing pipelines</li>
+                            <li>Improved model accuracy by 15%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-pink mb-4">Projects</h2>
+                <div id="projects-section" class="space-y-4">
+                    <div>
+                        <h3 class="text-xl font-semibold">Project Name</h3>
+                        <p class="text-gray-300">Description of the project</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>Key achievement 1</li>
+                            <li>Key achievement 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Secure hash of your password (replace this with your own hashed password)
+        const ADMIN_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // This is the hash of "password" - change it!
+        
+        // Resume data management
+        let resumeData = null;
+        let isAuthenticated = false;
+        
+        // Password verification
+        async function verifyPassword() {
+            const password = document.getElementById('admin-password').value;
+            const hash = await sha256(password);
+            
+            if (hash === ADMIN_HASH) {
+                isAuthenticated = true;
+                document.getElementById('password-modal').style.display = 'none';
+                document.getElementById('formatting-toolbar').style.display = 'flex';
+                loadResumeData();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+        
+        // SHA-256 hash function
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        async function loadResumeData() {
+            try {
+                const response = await fetch('/api/resume.php');
+                if (!response.ok) throw new Error('Failed to load resume data');
+                resumeData = await response.json();
+                renderResumeData();
+            } catch (error) {
+                console.error('Error loading resume data:', error);
+                showToast('Error loading resume data', 'error');
+            }
+        }
+        
+        function renderResumeData() {
+            if (!resumeData) return;
+            
+            // Update the DOM with the loaded data
+            const content = document.getElementById('resume-content');
+            content.innerHTML = generateResumeHTML(resumeData);
+            
+            // Apply saved theme
+            if (resumeData.theme) {
+                changeTheme(resumeData.theme);
+            }
+        }
+        
+        function generateResumeHTML(data) {
+            return `
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold text-neon-cyan mb-2">${data.basics.name}</h1>
+                    <p class="text-lg text-gray-300">${data.basics.title}</p>
+                </div>
+                <!-- Rest of the sections... -->
+            `;
+        }
+        
+        async function saveChanges() {
+            if (!isAuthenticated) {
+                alert('Please login first!');
+                return;
+            }
+            
+            try {
+                const content = document.getElementById('resume-content');
+                resumeData = extractResumeData(content);
+                
+                const response = await fetch('/api/resume.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        passwordHash: ADMIN_HASH,
+                        resumeData: resumeData
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to save resume data');
+                
+                showToast('Changes saved successfully');
+            } catch (error) {
+                console.error('Error saving resume data:', error);
+                showToast('Error saving changes', 'error');
+            }
+        }
+        
+        function extractResumeData(content) {
+            // Extract data from DOM and return as JSON object
+            return {
+                basics: {
+                    name: content.querySelector('h1').textContent,
+                    title: content.querySelector('p.text-lg').textContent,
+                    // ... other fields
+                },
+                // ... other sections
+            };
+        }
+        
+        // Text formatting functions
+        function formatText(style) {
+            document.execCommand(style, false, null);
+        }
+        
+        function changeTextColor(colorClass) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = colorClass;
+            range.surroundContents(span);
+        }
+        
+        function changeFontSize(sizeClass) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = sizeClass;
+            range.surroundContents(span);
+        }
+        
+        // Theme management
+        function changeTheme(theme) {
+            const content = document.getElementById('resume-content');
+            content.className = content.className.replace(/theme-\w+/, '') + ' ' + theme;
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-xl ${
+                type === 'error' ? 'border-red-500 border-2' : ''
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // History for undo/redo
+        let undoStack = [];
+        let redoStack = [];
+        let isUndoRedo = false;
+        
+        document.getElementById('resume-content').addEventListener('input', () => {
+            if (!isUndoRedo) {
+                undoStack.push(document.getElementById('resume-content').innerHTML);
+                redoStack = [];
+            }
+        });
+        
+        function undo() {
+            if (undoStack.length > 0) {
+                const current = document.getElementById('resume-content').innerHTML;
+                redoStack.push(current);
+                isUndoRedo = true;
+                document.getElementById('resume-content').innerHTML = undoStack.pop();
+                isUndoRedo = false;
+            }
+        }
+        
+        function redo() {
+            if (redoStack.length > 0) {
+                const current = document.getElementById('resume-content').innerHTML;
+                undoStack.push(current);
+                isUndoRedo = true;
+                document.getElementById('resume-content').innerHTML = redoStack.pop();
+                isUndoRedo = false;
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'z':
+                        if (e.shiftKey) {
+                            e.preventDefault();
+                            redo();
+                        } else {
+                            e.preventDefault();
+                            undo();
+                        }
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        saveChanges();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

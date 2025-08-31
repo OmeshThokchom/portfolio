@@ -1,0 +1,54 @@
+{
+    "basics": {
+        "name": "Omesh Thokchom",
+        "title": "AI/ML Developer | B.Tech CSE Student",
+        "email": "your.email@example.com",
+        "phone": "Your Phone",
+        "location": "Your Location",
+        "linkedin": "Your LinkedIn"
+    },
+    "education": [
+        {
+            "degree": "B.Tech in Computer Science and Engineering",
+            "institution": "Your University",
+            "period": "2020 - 2024",
+            "details": []
+        }
+    ],
+    "skills": {
+        "programming": [
+            "Python",
+            "JavaScript",
+            "C++"
+        ],
+        "technologies": [
+            "TensorFlow",
+            "PyTorch",
+            "React"
+        ]
+    },
+    "experience": [
+        {
+            "position": "AI/ML Intern",
+            "company": "Company Name",
+            "period": "June 2023 - August 2023",
+            "achievements": [
+                "Implemented deep learning models for image classification",
+                "Developed data preprocessing pipelines",
+                "Improved model accuracy by 15%"
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "name": "Project Name",
+            "description": "Description of the project",
+            "achievements": [
+                "Key achievement 1",
+                "Key achievement 2"
+            ]
+        }
+    ],
+    "lastModified": "",
+    "theme": "theme-default"
+}

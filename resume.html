@@ -5,20 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omesh Thokchom - Resume</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>ial-scale=1.0">
+    <title>Omesh Thokchom - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- html2canvas for image export -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <!-- AutoSave library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <style>
+        [contenteditable] {
+            outline: 2px solid transparent;
+            transition: outline-color 0.2s;
+        }
+        [contenteditable]:hover {
+            outline-color: #06b6d4;
+        }
+        [contenteditable]:focus {
+            outline: 2px solid #06b6d4;
+            background-color: rgba(6, 182, 212, 0.1);
+        }
+        .edited {
+            animation: flash 0.5s ease-in-out;
+        }
+        @keyframes flash {
+            0% { background-color: rgba(6, 182, 212, 0.2); }
+            100% { background-color: transparent; }
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white p-8">
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
+            <h2 class="text-2xl font-bold text-neon-cyan mb-4">Enter Admin Password</h2>
+            <input type="password" id="admin-password" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="Enter password">
+            <div class="flex justify-end space-x-4">
+                <button onclick="closePasswordModal()" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+                <button onclick="verifyPassword()" class="bg-neon-blue text-white px-4 py-2 rounded">Login</button>
+            </div>
+        </div>
+    </div>
+
     <div class="max-w-4xl mx-auto">
-        <!-- Download Buttons -->
+        <!-- Formatting Toolbar -->
+        <div id="formatting-toolbar" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 p-2 rounded-lg shadow-xl space-x-2 hidden z-50">
+            <button onclick="formatText('bold')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Bold">
+                <i class="fas fa-bold"></i>
+            </button>
+            <button onclick="formatText('italic')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Italic">
+                <i class="fas fa-italic"></i>
+            </button>
+            <button onclick="formatText('underline')" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Underline">
+                <i class="fas fa-underline"></i>
+            </button>
+            <select onchange="changeTextColor(this.value)" class="bg-gray-700 px-2 py-1 rounded" title="Text Color">
+                <option value="text-white">White</option>
+                <option value="text-neon-blue">Neon Blue</option>
+                <option value="text-neon-purple">Neon Purple</option>
+                <option value="text-neon-cyan">Neon Cyan</option>
+                <option value="text-neon-pink">Neon Pink</option>
+            </select>
+            <select onchange="changeFontSize(this.value)" class="bg-gray-700 px-2 py-1 rounded" title="Font Size">
+                <option value="text-sm">Small</option>
+                <option value="text-base">Normal</option>
+                <option value="text-lg">Large</option>
+                <option value="text-xl">Extra Large</option>
+                <option value="text-2xl">2X Large</option>
+            </select>
+            <button onclick="undo()" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Undo">
+                <i class="fas fa-undo"></i>
+            </button>
+            <button onclick="redo()" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600" title="Redo">
+                <i class="fas fa-redo"></i>
+            </button>
+        </div>
+
+        <!-- Theme Selector -->
+        <div id="theme-selector" class="fixed top-4 left-4 hidden">
+            <select onchange="changeTheme(this.value)" class="bg-gray-700 px-4 py-2 rounded-lg">
+                <option value="theme-default">Default Theme</option>
+                <option value="theme-modern">Modern</option>
+                <option value="theme-minimal">Minimal</option>
+                <option value="theme-dark">Dark Neon</option>
+                <option value="theme-gradient">Gradient</option>
+            </select>
+        </div>
+
+        <!-- Control Buttons -->
         <div class="fixed top-4 right-4 space-x-4">
             <button onclick="downloadPDF()" class="bg-neon-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Download PDF
             </button>
             <button onclick="downloadImage()" class="bg-neon-purple hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Download Image
+            </button>
+            <button onclick="togglePreview()" id="preview-btn" class="bg-neon-pink hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors hidden">
+                Toggle Preview
+            </button>
+            <button onclick="showPasswordModal()" id="edit-btn" class="bg-neon-cyan hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Edit Resume
             </button>
         </div>
 
@@ -122,7 +211,539 @@
             }
         });
 
+        // Secure hash of your password (replace this with your own hashed password)
+        const ADMIN_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // This is the hash of "password" - change it!
+        
+        // Resume data management
+        let resumeData = null;
+        
+        async function loadResumeData() {
+            try {
+                const response = await fetch('/api/resume.php');
+                if (!response.ok) throw new Error('Failed to load resume data');
+                resumeData = await response.json();
+                renderResumeData();
+            } catch (error) {
+                console.error('Error loading resume data:', error);
+                showToast('Error loading resume data', 'error');
+            }
+        }
+        
+        function renderResumeData() {
+            // Update basic information
+            document.querySelector('#resume-content h1').textContent = resumeData.basics.name;
+            document.querySelector('#resume-content p.text-lg').textContent = resumeData.basics.title;
+            
+            // Update contact info
+            const contactSection = document.querySelector('#contact-info');
+            contactSection.innerHTML = `
+                <p>📧 Email: ${resumeData.basics.email}</p>
+                <p>📱 Phone: ${resumeData.basics.phone}</p>
+                <p>🌍 Location: ${resumeData.basics.location}</p>
+                <p>💼 LinkedIn: ${resumeData.basics.linkedin}</p>
+            `;
+            
+            // Update education
+            const educationSection = document.querySelector('#education-section');
+            educationSection.innerHTML = resumeData.education.map(edu => `
+                <div>
+                    <h3 class="text-xl font-semibold">${edu.degree}</h3>
+                    <p class="text-gray-300">${edu.institution}</p>
+                    <p class="text-gray-400">${edu.period}</p>
+                </div>
+            `).join('');
+            
+            // Update skills
+            const skillsSection = document.querySelector('#skills-section');
+            skillsSection.innerHTML = `
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Programming Languages</h3>
+                    <ul class="list-disc list-inside text-gray-300">
+                        ${resumeData.skills.programming.map(skill => `<li>${skill}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Technologies</h3>
+                    <ul class="list-disc list-inside text-gray-300">
+                        ${resumeData.skills.technologies.map(tech => `<li>${tech}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            // Update experience
+            const experienceSection = document.querySelector('#experience-section');
+            experienceSection.innerHTML = resumeData.experience.map(exp => `
+                <div>
+                    <h3 class="text-xl font-semibold">${exp.position}</h3>
+                    <p class="text-gray-300">${exp.company}</p>
+                    <p class="text-gray-400">${exp.period}</p>
+                    <ul class="list-disc list-inside text-gray-300 mt-2">
+                        ${exp.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+            
+            // Update projects
+            const projectsSection = document.querySelector('#projects-section');
+            projectsSection.innerHTML = resumeData.projects.map(project => `
+                <div>
+                    <h3 class="text-xl font-semibold">${project.name}</h3>
+                    <p class="text-gray-300">${project.description}</p>
+                    <ul class="list-disc list-inside text-gray-300 mt-2">
+                        ${project.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+            
+            // Apply saved theme
+            if (resumeData.theme) {
+                changeTheme(resumeData.theme);
+            }
+        }
+        
+        async function saveResumeData() {
+            try {
+                const content = document.getElementById('resume-content');
+                
+                // Extract data from DOM
+                resumeData = {
+                    basics: {
+                        name: content.querySelector('h1').textContent,
+                        title: content.querySelector('p.text-lg').textContent,
+                        email: content.querySelector('#contact-info p:nth-child(1)').textContent.replace('📧 Email: ', ''),
+                        phone: content.querySelector('#contact-info p:nth-child(2)').textContent.replace('📱 Phone: ', ''),
+                        location: content.querySelector('#contact-info p:nth-child(3)').textContent.replace('🌍 Location: ', ''),
+                        linkedin: content.querySelector('#contact-info p:nth-child(4)').textContent.replace('💼 LinkedIn: ', '')
+                    },
+                    education: Array.from(content.querySelectorAll('#education-section > div')).map(edu => ({
+                        degree: edu.querySelector('h3').textContent,
+                        institution: edu.querySelector('.text-gray-300').textContent,
+                        period: edu.querySelector('.text-gray-400').textContent
+                    })),
+                    skills: {
+                        programming: Array.from(content.querySelectorAll('#skills-section > div:first-child li')).map(li => li.textContent),
+                        technologies: Array.from(content.querySelectorAll('#skills-section > div:last-child li')).map(li => li.textContent)
+                    },
+                    experience: Array.from(content.querySelectorAll('#experience-section > div')).map(exp => ({
+                        position: exp.querySelector('h3').textContent,
+                        company: exp.querySelector('.text-gray-300').textContent,
+                        period: exp.querySelector('.text-gray-400').textContent,
+                        achievements: Array.from(exp.querySelectorAll('li')).map(li => li.textContent)
+                    })),
+                    projects: Array.from(content.querySelectorAll('#projects-section > div')).map(proj => ({
+                        name: proj.querySelector('h3').textContent,
+                        description: proj.querySelector('p').textContent,
+                        achievements: Array.from(proj.querySelectorAll('li')).map(li => li.textContent)
+                    })),
+                    theme: content.className.match(/theme-\w+/)?.[0] || 'theme-default'
+                };
+                
+                const response = await fetch('/api/resume.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        passwordHash: ADMIN_HASH,
+                        resumeData: resumeData
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to save resume data');
+                
+                const result = await response.json();
+                showToast(result.message);
+            } catch (error) {
+                console.error('Error saving resume data:', error);
+                showToast('Error saving resume data', 'error');
+            }
+        }
+        
+        // History for undo/redo
+        let undoStack = [];
+        let redoStack = [];
+        let isUndoRedo = false;
+        
+        // AutoSave functionality
+        let autoSaveInterval;
+        const AUTO_SAVE_DELAY = 30000; // 30 seconds
+        
+        // Track changes for undo/redo
+        function trackChange() {
+            if (!isUndoRedo) {
+                const content = document.getElementById('resume-content').innerHTML;
+                undoStack.push(content);
+                redoStack = []; // Clear redo stack when new change is made
+                
+                // Keep stack size manageable
+                if (undoStack.length > 50) undoStack.shift();
+            }
+        }
+        
+        // Undo/Redo functions
+        function undo() {
+            if (undoStack.length > 0) {
+                const current = document.getElementById('resume-content').innerHTML;
+                redoStack.push(current);
+                isUndoRedo = true;
+                document.getElementById('resume-content').innerHTML = undoStack.pop();
+                isUndoRedo = false;
+            }
+        }
+        
+        function redo() {
+            if (redoStack.length > 0) {
+                const current = document.getElementById('resume-content').innerHTML;
+                undoStack.push(current);
+                isUndoRedo = true;
+                document.getElementById('resume-content').innerHTML = redoStack.pop();
+                isUndoRedo = false;
+            }
+        }
+        
+        // Auto-save functionality
+        function setupAutoSave() {
+            autoSaveInterval = setInterval(() => {
+                if (isEditMode) {
+                    const content = document.getElementById('resume-content').innerHTML;
+                    localStorage.setItem('resumeAutoSave', content);
+                    showToast('Resume auto-saved');
+                }
+            }, AUTO_SAVE_DELAY);
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-xl';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Text formatting functions
+        function formatText(style) {
+            document.execCommand(style, false, null);
+            trackChange();
+        }
+        
+        function changeTextColor(colorClass) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = colorClass;
+            range.surroundContents(span);
+            trackChange();
+        }
+        
+        function changeFontSize(sizeClass) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = sizeClass;
+            range.surroundContents(span);
+            trackChange();
+        }
+        
+        // Theme management
+        function changeTheme(theme) {
+            const content = document.getElementById('resume-content');
+            content.className = content.className.replace(/theme-\w+/, '') + ' ' + theme;
+            trackChange();
+        }
+        
+        // Preview mode
+        function togglePreview() {
+            const content = document.getElementById('resume-content');
+            const isPreview = content.classList.toggle('preview-mode');
+            const controls = document.querySelectorAll('.edit-controls');
+            controls.forEach(control => control.style.display = isPreview ? 'none' : 'block');
+            document.getElementById('preview-btn').textContent = isPreview ? 'Exit Preview' : 'Preview';
+        }
+        
+        // Load auto-saved content
+        function loadAutoSavedContent() {
+            const saved = localStorage.getItem('resumeAutoSave');
+            if (saved && confirm('Found auto-saved content. Would you like to restore it?')) {
+                document.getElementById('resume-content').innerHTML = saved;
+            }
+        }
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'z':
+                        if (e.shiftKey) {
+                            e.preventDefault();
+                            redo();
+                        } else {
+                            e.preventDefault();
+                            undo();
+                        }
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        if (isEditMode) saveChanges();
+                        break;
+                    case 'p':
+                        e.preventDefault();
+                        if (isEditMode) togglePreview();
+                        break;
+                }
+            }
+        });
+        let isEditMode = false;
+
+        function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            return crypto.subtle.digest('SHA-256', data).then(hash => {
+                return Array.from(new Uint8Array(hash))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            });
+        }
+
+        function showPasswordModal() {
+            document.getElementById('password-modal').classList.remove('hidden');
+        }
+
+        function addElementBefore(element) {
+            const newElement = document.createElement('div');
+            newElement.classList.add('group', 'relative', 'my-4');
+            newElement.innerHTML = 'New content...';
+            makeElementEditable(newElement);
+            addEditControls(newElement);
+            element.parentElement.insertBefore(newElement, element);
+        }
+
+        function addElementAfter(element) {
+            const newElement = document.createElement('div');
+            newElement.classList.add('group', 'relative', 'my-4');
+            newElement.innerHTML = 'New content...';
+            makeElementEditable(newElement);
+            addEditControls(newElement);
+            element.parentElement.insertBefore(newElement, element.nextSibling);
+        }
+
+        function deleteElement(element) {
+            if (confirm('Are you sure you want to delete this element?')) {
+                element.remove();
+            }
+        }
+
+        function changeElementType(element, type) {
+            if (!type) return;
+            
+            const content = element.innerHTML;
+            const newElement = document.createElement(type);
+            
+            // Preserve classes and content
+            newElement.className = element.className;
+            newElement.innerHTML = content;
+            
+            if (type === 'ul') {
+                // Convert content to list items
+                const text = element.textContent;
+                newElement.innerHTML = text.split('\n')
+                    .filter(line => line.trim())
+                    .map(line => `<li>${line.trim()}</li>`)
+                    .join('');
+            }
+            
+            element.parentElement.replaceChild(newElement, element);
+            makeElementEditable(newElement);
+            addEditControls(newElement);
+        }
+
+        function addNewSection(type) {
+            const content = document.getElementById('resume-content');
+            const newSection = document.createElement('div');
+            newSection.classList.add('mb-8', 'group', 'relative');
+            
+            switch(type) {
+                case 'heading':
+                    newSection.innerHTML = `<h2 class="text-2xl font-bold text-neon-purple mb-4">New Heading</h2>`;
+                    break;
+                case 'experience':
+                    newSection.innerHTML = `
+                        <h2 class="text-2xl font-bold text-neon-blue mb-4">Experience</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-xl font-semibold">Position</h3>
+                                <p class="text-gray-300">Company Name</p>
+                                <p class="text-gray-400">Date Range</p>
+                                <ul class="list-disc list-inside text-gray-300 mt-2">
+                                    <li>Achievement 1</li>
+                                    <li>Achievement 2</li>
+                                </ul>
+                            </div>
+                        </div>`;
+                    break;
+                case 'skills':
+                    newSection.innerHTML = `
+                        <h2 class="text-2xl font-bold text-neon-cyan mb-4">Skills</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Category</h3>
+                                <ul class="list-disc list-inside text-gray-300">
+                                    <li>Skill 1</li>
+                                    <li>Skill 2</li>
+                                    <li>Skill 3</li>
+                                </ul>
+                            </div>
+                        </div>`;
+                    break;
+                case 'education':
+                    newSection.innerHTML = `
+                        <h2 class="text-2xl font-bold text-neon-pink mb-4">Education</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-xl font-semibold">Degree Name</h3>
+                                <p class="text-gray-300">Institution Name</p>
+                                <p class="text-gray-400">Year - Year</p>
+                            </div>
+                        </div>`;
+                    break;
+            }
+            
+            makeElementEditable(newSection);
+            addEditControls(newSection);
+            content.appendChild(newSection);
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.add('hidden');
+            document.getElementById('admin-password').value = '';
+        }
+
+        async function verifyPassword() {
+            const password = document.getElementById('admin-password').value;
+            const hash = await sha256(password);
+            
+            if (hash === ADMIN_HASH) {
+                enableEditMode();
+                closePasswordModal();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function addEditControls(element) {
+            const controls = document.createElement('div');
+            controls.className = 'edit-controls absolute right-0 top-0 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity';
+            controls.innerHTML = `
+                <button onclick="addElementBefore(this.parentElement.parentElement)" class="bg-neon-cyan text-xs px-2 py-1 rounded">↑ Add</button>
+                <button onclick="addElementAfter(this.parentElement.parentElement)" class="bg-neon-cyan text-xs px-2 py-1 rounded">↓ Add</button>
+                <button onclick="deleteElement(this.parentElement.parentElement)" class="bg-red-500 text-xs px-2 py-1 rounded">Delete</button>
+                <select onchange="changeElementType(this.parentElement.parentElement, this.value)" class="bg-gray-700 text-xs px-2 py-1 rounded">
+                    <option value="">Change to...</option>
+                    <option value="h2">Heading</option>
+                    <option value="p">Paragraph</option>
+                    <option value="ul">List</option>
+                    <option value="div">Section</option>
+                </select>
+            `;
+            element.appendChild(controls);
+        }
+
+        function enableEditMode() {
+            isEditMode = true;
+            document.getElementById('edit-btn').textContent = 'Save Changes';
+            document.getElementById('edit-btn').onclick = saveChanges;
+            
+            // Show additional controls
+            document.getElementById('formatting-toolbar').classList.remove('hidden');
+            document.getElementById('theme-selector').classList.remove('hidden');
+            document.getElementById('preview-btn').classList.remove('hidden');
+            
+            // Setup auto-save
+            setupAutoSave();
+            
+            // Check for auto-saved content
+            loadAutoSavedContent();
+            
+            // Add a floating toolbar for adding new sections
+            const toolbar = document.createElement('div');
+            toolbar.id = 'edit-toolbar';
+            toolbar.className = 'fixed left-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-4 rounded-lg shadow-xl space-y-2';
+            toolbar.innerHTML = `
+                <button onclick="addNewSection('heading')" class="block w-full bg-neon-cyan hover:bg-cyan-600 text-white px-4 py-2 rounded-lg mb-2">Add Heading</button>
+                <button onclick="addNewSection('experience')" class="block w-full bg-neon-purple hover:bg-purple-600 text-white px-4 py-2 rounded-lg mb-2">Add Experience</button>
+                <button onclick="addNewSection('skills')" class="block w-full bg-neon-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-2">Add Skills</button>
+                <button onclick="addNewSection('education')" class="block w-full bg-neon-pink hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Education</button>
+            `;
+            document.body.appendChild(toolbar);
+
+            // Make all content sections editable
+            const content = document.getElementById('resume-content');
+            content.classList.add('relative');
+            
+            const sections = content.children;
+            Array.from(sections).forEach(section => {
+                section.classList.add('group', 'relative');
+                if (!section.querySelector('.edit-controls')) {
+                    addEditControls(section);
+                }
+                makeElementEditable(section);
+            });
+        }
+
+        function makeElementEditable(element) {
+            element.contentEditable = true;
+            element.classList.add('hover:bg-gray-700', 'transition-colors', 'p-1', 'rounded');
+            
+            if (element.children.length > 0) {
+                Array.from(element.children).forEach(child => {
+                    if (!child.classList.contains('edit-controls')) {
+                        makeElementEditable(child);
+                    }
+                });
+            }
+        }
+
+        async function saveChanges() {
+            isEditMode = false;
+            document.getElementById('edit-btn').textContent = 'Edit Resume';
+            document.getElementById('edit-btn').onclick = showPasswordModal;
+            
+            // Hide additional controls
+            document.getElementById('formatting-toolbar').classList.add('hidden');
+            document.getElementById('theme-selector').classList.add('hidden');
+            document.getElementById('preview-btn').classList.add('hidden');
+            
+            // Clear auto-save interval
+            clearInterval(autoSaveInterval);
+            localStorage.removeItem('resumeAutoSave');
+            
+            // Save final state to undo stack and JSON
+            trackChange();
+            await saveResumeData();
+            
+            // Remove editing toolbar
+            const toolbar = document.getElementById('edit-toolbar');
+            if (toolbar) toolbar.remove();
+            
+            // Remove edit controls and disable editing
+            const controls = document.querySelectorAll('.edit-controls');
+            controls.forEach(control => control.remove());
+            
+            const editableElements = document.querySelectorAll('[contenteditable]');
+            editableElements.forEach(element => {
+                element.contentEditable = false;
+                element.classList.remove('hover:bg-gray-700', 'transition-colors', 'p-1', 'rounded', 'group', 'relative');
+            });
+        }
+
         function downloadPDF() {
+            if (isEditMode) {
+                alert('Please save your changes before downloading.');
+                return;
+            }
             const element = document.getElementById('resume-content');
             const opt = {
                 margin: 1,
