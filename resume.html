@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omesh Thokchom - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas for image export -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Download Buttons -->
+        <div class="fixed top-4 right-4 space-x-4">
+            <button onclick="downloadPDF()" class="bg-neon-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Download PDF
+            </button>
+            <button onclick="downloadImage()" class="bg-neon-purple hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Download Image
+            </button>
+        </div>
+
+        <!-- Resume Content -->
+        <div id="resume-content" class="bg-gray-800 p-8 rounded-lg shadow-xl">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-neon-cyan mb-2">Omesh Thokchom</h1>
+                <p class="text-lg text-gray-300">AI/ML Developer | B.Tech CSE Student</p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-pink mb-4">Contact Information</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <p>📧 Email: your.email@example.com</p>
+                    <p>📱 Phone: Your Phone</p>
+                    <p>🌍 Location: Your Location</p>
+                    <p>💼 LinkedIn: Your LinkedIn</p>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-purple mb-4">Education</h2>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-xl font-semibold">B.Tech in Computer Science and Engineering</h3>
+                        <p class="text-gray-300">Your University</p>
+                        <p class="text-gray-400">2020 - 2024</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-cyan mb-4">Technical Skills</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Programming Languages</h3>
+                        <ul class="list-disc list-inside text-gray-300">
+                            <li>Python</li>
+                            <li>JavaScript</li>
+                            <li>C++</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Technologies</h3>
+                        <ul class="list-disc list-inside text-gray-300">
+                            <li>TensorFlow</li>
+                            <li>PyTorch</li>
+                            <li>React</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-blue mb-4">Experience</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold">AI/ML Intern</h3>
+                        <p class="text-gray-300">Company Name</p>
+                        <p class="text-gray-400">June 2023 - August 2023</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>Implemented deep learning models for image classification</li>
+                            <li>Developed data preprocessing pipelines</li>
+                            <li>Improved model accuracy by 15%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-neon-pink mb-4">Projects</h2>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-xl font-semibold">Project Name</h3>
+                        <p class="text-gray-300">Description of the project</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>Key achievement 1</li>
+                            <li>Key achievement 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check URL parameters for auto-download
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            
+            if (action === 'download-pdf') {
+                downloadPDF();
+            } else if (action === 'download-image') {
+                downloadImage();
+            }
+        });
+
+        function downloadPDF() {
+            const element = document.getElementById('resume-content');
+            const opt = {
+                margin: 1,
+                filename: 'omesh-thokchom-resume.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        async function downloadImage() {
+            const element = document.getElementById('resume-content');
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#1f2937' // Matching bg-gray-800
+            });
+
+            const link = document.createElement('a');
+            link.download = 'omesh-thokchom-resume.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Add custom Tailwind colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-purple': '#a855f7',
+                        'neon-cyan': '#06b6d4',
+                        'neon-blue': '#3b82f6',
+                        'neon-pink': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -93,6 +93,9 @@ class Terminal {
                 <br><span class="command">Portfolio Commands:</span>
                 <br>• about - Learn about me
                 <br>• skills - View my technical skills
+                <br>• resume - View my resume
+                <br>• resume --download - Download resume as PDF
+                <br>• resume --image - Download resume as image
                 <br>• projects - See my projects
                 <br>• contact - Get my contact info
                 <br>• github - Open GitHub profile
@@ -171,10 +174,115 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso
                 <br>Epoch 100/100 - Loss: 0.1234 - Acc: 0.9567 ✓
                 <br>
                 <br><span class="terminal-success">Training completed successfully!</span>
-            </div>`
+            </div>`,
+
+            resume: async (args) => {
+                if (args === '--download') {
+                    // Create an iframe to properly render the resume with all styles
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'absolute';
+                    iframe.style.left = '-9999px';
+                    iframe.style.width = '816px';  // Letter size width
+                    iframe.style.height = '1056px'; // Letter size height
+                    document.body.appendChild(iframe);
+                    
+                    // Load resume content
+                    const response = await fetch('resume.html');
+                    const html = await response.text();
+                    
+                    // Write the complete HTML to iframe
+                    iframe.contentDocument.open();
+                    iframe.contentDocument.write(html);
+                    iframe.contentDocument.close();
+                    
+                    // Wait for all resources to load
+                    await new Promise(resolve => {
+                        iframe.onload = resolve;
+                        setTimeout(resolve, 1000); // Fallback timeout
+                    });
+                    
+                    const content = iframe.contentDocument.getElementById('resume-content');
+
+                    // Generate PDF with better options
+                    const opt = {
+                        margin: [0.5, 0.5],
+                        filename: 'omesh-thokchom-resume.pdf',
+                        image: { type: 'jpeg', quality: 1 },
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            width: 816, // Letter size width at 96 DPI
+                            height: 1056, // Letter size height at 96 DPI
+                            windowWidth: 816,
+                            windowHeight: 1056
+                        },
+                        jsPDF: { 
+                            unit: 'pt', 
+                            format: 'letter', 
+                            orientation: 'portrait'
+                        }
+                    };
+                    
+                    await html2pdf().set(opt).from(content).save();
+                    document.body.removeChild(iframe);
+                    
+                    return '<div class="terminal-success">Downloading resume as PDF...</div>';
+                } else if (args === '--image') {
+                    // Create an iframe to properly render the resume with all styles
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'absolute';
+                    iframe.style.left = '-9999px';
+                    iframe.style.width = '816px';  // Letter size width
+                    iframe.style.height = '1056px'; // Letter size height
+                    document.body.appendChild(iframe);
+                    
+                    // Load resume content
+                    const response = await fetch('resume.html');
+                    const html = await response.text();
+                    
+                    // Write the complete HTML to iframe
+                    iframe.contentDocument.open();
+                    iframe.contentDocument.write(html);
+                    iframe.contentDocument.close();
+                    
+                    // Wait for all resources to load
+                    await new Promise(resolve => {
+                        iframe.onload = resolve;
+                        setTimeout(resolve, 1000); // Fallback timeout
+                    });
+                    
+                    const content = iframe.contentDocument.getElementById('resume-content');
+                    
+                    // Generate image with better options
+                    const canvas = await html2canvas(content, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        width: 816,
+                        height: 1056,
+                        windowWidth: 816,
+                        windowHeight: 1056,
+                        backgroundColor: '#1f2937'
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = 'omesh-thokchom-resume.png';
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                    
+                    document.body.removeChild(iframe);
+                    return '<div class="terminal-success">Downloading resume as image...</div>';
+                } else {
+                    window.open('resume.html', '_blank');
+                    return '<div class="terminal-success">Opening resume in new tab...</div>';
+                }
+            }
         };
 
-        return commands[command] ? commands[command]() : `<span class="terminal-error">Command not found: ${command}</span>`;
+        // Parse command and arguments
+        const [cmd, ...args] = command.split(' ');
+        return commands[cmd] ? commands[cmd](args.join(' ')) : `<span class="terminal-error">Command not found: ${command}</span>`;
     }
 }
 
