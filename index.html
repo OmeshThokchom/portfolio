@@ -52,6 +52,7 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
         
         * {
             margin: 0;
@@ -103,28 +104,44 @@
         }
         
         .terminal-text {
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 1px solid #06b6d4;
-            box-shadow: 0 0 10px #06b6d4;
-            font-family: 'Share Tech Mono', monospace;
+            background-color: #000;
+            border: 1px solid #444;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
             color: #00ff00;
-            padding: 1rem;
-            border-radius: 5px;
+            padding: 1.5rem;
+            border-radius: 0;
             overflow-y: auto;
-            max-height: 300px;
+            max-height: 350px;
         }
         
         .terminal-input {
             background: transparent;
             border: none;
             color: #00ff00;
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
             width: 100%;
             outline: none;
+            caret-color: #00ff00;
+            font-size: 0.9rem;
         }
         
         .command {
-            color: #06b6d4;
+            color: #4f9cf9;
+            font-weight: 600;
+        }
+        
+        .terminal-prompt {
+            color: #4f9cf9;
+            font-weight: bold;
+        }
+        
+        .terminal-user {
+            color: #00ff00;
+        }
+        
+        .terminal-path {
+            color: #ffa500;
         }
         
         .skill-bar {
@@ -176,38 +193,82 @@
             }
         }
         
-        .cube {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(-15deg) rotateY(15deg);
-            animation: rotate 15s linear infinite;
-        }
-        
-        .cube-face {
-            position: absolute;
+        .neural-network-viz {
             width: 100%;
-            height: 100%;
-            border: 2px solid #06b6d4;
-            box-shadow: 0 0 15px #06b6d4, inset 0 0 15px #06b6d4;
+            height: 300px;
+            position: relative;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            background: rgba(6, 182, 212, 0.1);
+            padding: 20px;
         }
         
-        .cube-front { transform: translateZ(50px); }
-        .cube-back { transform: translateZ(-50px) rotateY(180deg); }
-        .cube-right { transform: translateX(50px) rotateY(90deg); }
-        .cube-left { transform: translateX(-50px) rotateY(-90deg); }
-        .cube-top { transform: translateY(-50px) rotateX(90deg); }
-        .cube-bottom { transform: translateY(50px) rotateX(-90deg); }
+        .network-layer {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+        }
         
-        @keyframes rotate {
-            from { transform: rotateX(-15deg) rotateY(0deg); }
-            to { transform: rotateX(-15deg) rotateY(360deg); }
+        .neuron {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(168, 85, 247, 0.3);
+            border: 2px solid #a855f7;
+            box-shadow: 0 0 10px #a855f7;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .neuron[data-active="true"] {
+            background: rgba(6, 182, 212, 0.8);
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px #06b6d4, 0 0 30px #06b6d4;
+            animation: pulse-neuron 2s ease-in-out infinite;
+        }
+        
+        .neuron::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+        
+        .neuron[data-active="true"]::before {
+            width: 30px;
+            height: 30px;
+        }
+        
+        @keyframes pulse-neuron {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px #06b6d4, 0 0 30px #06b6d4;
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 25px #06b6d4, 0 0 50px #06b6d4;
+            }
+        }
+        
+        .neural-network-viz::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            animation: pulse-glow 3s ease-in-out infinite;
         }
         
         .project-card {
@@ -330,7 +391,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="md:w-1/2 mb-10 md:mb-0 fade-in">
                     <h1 class="text-4xl md:text-6xl font-bold mb-4 neon-text-cyan">AI/ML DEVELOPER</h1>
-                    <div class="text-xl md:text-2xl mb-6 h-12 overflow-hidden">
+                    <div class="text-xl md:text-2xl mb-6 min-h-[3rem]">
                         <span id="typewriter" class="neon-text-purple"></span>
                         <span class="blinking-cursor">|</span>
                     </div>
@@ -341,16 +402,29 @@
                     </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center fade-in">
-                    <div class="relative">
-                        <div class="cube mx-auto">
-                            <div class="cube-face cube-front">AI</div>
-                            <div class="cube-face cube-back">ML</div>
-                            <div class="cube-face cube-right">NN</div>
-                            <div class="cube-face cube-left">DL</div>
-                            <div class="cube-face cube-top">CV</div>
-                            <div class="cube-face cube-bottom">NLP</div>
+                    <div class="relative w-full max-w-md">
+                        <div class="neural-network-viz">
+                            <div class="network-layer input-layer">
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="false"></div>
+                                <div class="neuron" data-active="true"></div>
+                            </div>
+                            <div class="network-layer hidden-layer-1">
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="false"></div>
+                                <div class="neuron" data-active="true"></div>
+                            </div>
+                            <div class="network-layer hidden-layer-2">
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="true"></div>
+                            </div>
+                            <div class="network-layer output-layer">
+                                <div class="neuron" data-active="true"></div>
+                                <div class="neuron" data-active="false"></div>
+                            </div>
                         </div>
-                        <div class="absolute -inset-4 bg-neon-cyan rounded-full opacity-20 blur-xl"></div>
                     </div>
                 </div>
             </div>
@@ -361,15 +435,16 @@
     <section id="terminal" class="py-16 bg-gray-900 bg-opacity-70">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-8 neon-text-cyan">INTERACTIVE TERMINAL</h2>
-            <div class="max-w-3xl mx-auto terminal-text">
+            <div class="max-w-3xl mx-auto terminal-text font-mono text-sm">
                 <div id="terminal-output">
-                    <p>Welcome to AI Developer Terminal v2.1</p>
-                    <p>Type <span class="command">'help'</span> for available commands.</p>
-                    <p>> <span class="text-neon-cyan">initializing...</span></p>
+                    <p class="terminal-user">Welcome to Dayananda's Developer Terminal v3.0</p>
+                    <p class="text-gray-400">System initialized at <span class="terminal-prompt">$(date)</span></p>
+                    <p class="text-green-400">Type <span class="command">'help'</span> for available commands.</p>
+                    <p class="terminal-prompt">> initializing neural network modules...</p>
                 </div>
                 <div class="flex items-center mt-2">
-                    <span class="text-neon-cyan">user@portfolio:~$</span>
-                    <input type="text" id="terminal-input" class="terminal-input ml-2" autocomplete="off" autofocus>
+                    <span class="terminal-user font-mono text-sm">dayananda@portfolio<span class="terminal-path">:~$</span></span>
+                    <input type="text" id="terminal-input" class="w-full bg-transparent text-sm outline-none text-green-400 font-mono ml-2 p-1 border-none focus:ring-0" placeholder="" autocomplete="off" autofocus>
                 </div>
             </div>
         </div>
@@ -628,20 +703,46 @@
                 retina_detect: true
             });
             
-            // Typewriter Effect
-            const typewriterText = "AI/ML Developer | B.Tech CSE Student | Futuristic Coder";
+            // Modern Combat Style Typewriter Effect
+            const typewriterText = "AI/ML DEVELOPER | B.TECH CSE STUDENT | FUTURISTIC CODER";
             const typewriterElement = document.getElementById('typewriter');
             let i = 0;
             
-            function typeWriter() {
+            function combatTypeWriter() {
                 if (i < typewriterText.length) {
-                    typewriterElement.innerHTML += typewriterText.charAt(i);
+                    const charSpan = document.createElement('span');
+                    charSpan.textContent = typewriterText.charAt(i);
+                    charSpan.className = 'combat-char';
+                    
+                    // Random delay for brute force effect
+                    const randomDelay = Math.random() * 50 + 25; // 25-75ms
+                    charSpan.style.animationDelay = `${randomDelay}ms`;
+                    
+                    typewriterElement.appendChild(charSpan);
                     i++;
-                    setTimeout(typeWriter, 100);
+                    
+                    // Random speed variation for combat feel
+                    const nextDelay = Math.random() * 80 + 40; // 40-120ms
+                    setTimeout(combatTypeWriter, nextDelay);
                 }
             }
             
-            setTimeout(typeWriter, 1000);
+            setTimeout(combatTypeWriter, 800);
+            
+            // Add blinking cursor effect to terminal input
+            setInterval(() => {
+                const input = document.getElementById('terminal-input');
+                const hasCursor = input.parentElement.querySelector('.terminal-cursor');
+                
+                if (!hasCursor && document.activeElement !== input) {
+                    const cursor = document.createElement('span');
+                    cursor.className = 'terminal-cursor text-green-400 ml-1';
+                    cursor.innerHTML = '▋';
+                    input.parentElement.appendChild(cursor);
+                } else if (hasCursor && document.activeElement === input) {
+                    hasCursor.remove();
+                }
+            }, 500);
             
             // Cursor Follower
             const cursor = document.querySelector('.cursor-follow');
@@ -674,7 +775,7 @@
             const terminalOutput = document.getElementById('terminal-output');
             
             const commands = {
-                help: "Available commands: about, skills, projects, contact, train, clear",
+                help: "Available commands:<br>&nbsp;&nbsp;about&nbsp;&nbsp;&nbsp;&nbsp;- Display information about me<br>&nbsp;&nbsp;skills&nbsp;&nbsp;&nbsp;&nbsp;- Show technical skills<br>&nbsp;&nbsp;projects&nbsp;&nbsp;- List my projects<br>&nbsp;&nbsp;contact&nbsp;&nbsp;&nbsp;- Contact information<br>&nbsp;&nbsp;train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Train a neural network model<br>&nbsp;&nbsp;clear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Clear terminal screen",
                 about: "I am an AI/ML developer with expertise in deep learning, neural networks, and data science. Currently pursuing B.Tech in Computer Science.",
                 skills: "Python, TensorFlow, PyTorch, Keras, OpenCV, NLP, Data Analysis, Neural Networks, Deep Learning",
                 projects: "Neural Network Framework, Computer Vision API, NLP Chatbot, Predictive Analytics, Recommendation System",
@@ -688,21 +789,21 @@
             
             terminalInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    const command = terminalInput.value.trim().toLowerCase();
+                    const command = terminalInput.value.trim();
                     terminalInput.value = '';
                     
                     let output = "Command not found. Type 'help' for available commands.";
                     
-                    if (commands[command]) {
-                        if (typeof commands[command] === 'function') {
-                            output = commands[command]();
+                    if (commands[command.toLowerCase()]) {
+                        if (typeof commands[command.toLowerCase()] === 'function') {
+                            output = commands[command.toLowerCase()]();
                         } else {
-                            output = commands[command];
+                            output = commands[command.toLowerCase()];
                         }
                     }
                     
                     const newOutput = document.createElement('p');
-                    newOutput.innerHTML = `> <span class="text-neon-cyan">${command}</span><br>${output}`;
+                    newOutput.innerHTML = `<span class="terminal-user">dayananda@portfolio<span class="terminal-path">:~$</span></span> ${command}<br>${output}`;
                     terminalOutput.appendChild(newOutput);
                     terminalOutput.scrollTop = terminalOutput.scrollHeight;
                 }
