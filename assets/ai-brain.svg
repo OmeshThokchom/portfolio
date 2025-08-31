@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="800px" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="neuralGradient">
+            <stop stop-color="#06b6d4" offset="0%"/>
+            <stop stop-color="#a855f7" offset="100%"/>
+        </linearGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Brain outline -->
+    <path d="M400 100 C 550 100, 650 250, 650 400 C 650 550, 550 700, 400 700 C 250 700, 150 550, 150 400 C 150 250, 250 100, 400 100" 
+          fill="none" 
+          stroke="url(#neuralGradient)" 
+          stroke-width="4"
+          filter="url(#glow)"/>
+    
+    <!-- Neural network nodes -->
+    <g id="nodes">
+        <!-- Layer 1 -->
+        <circle cx="250" cy="250" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="250" cy="350" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="250" cy="450" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="250" cy="550" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        
+        <!-- Layer 2 -->
+        <circle cx="400" cy="200" r="8" fill="#a855f7" filter="url(#glow)"/>
+        <circle cx="400" cy="300" r="8" fill="#a855f7" filter="url(#glow)"/>
+        <circle cx="400" cy="400" r="8" fill="#a855f7" filter="url(#glow)"/>
+        <circle cx="400" cy="500" r="8" fill="#a855f7" filter="url(#glow)"/>
+        <circle cx="400" cy="600" r="8" fill="#a855f7" filter="url(#glow)"/>
+        
+        <!-- Layer 3 -->
+        <circle cx="550" cy="250" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="550" cy="350" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="550" cy="450" r="8" fill="#06b6d4" filter="url(#glow)"/>
+        <circle cx="550" cy="550" r="8" fill="#06b6d4" filter="url(#glow)"/>
+    </g>
+    
+    <!-- Neural network connections -->
+    <g id="connections" stroke-width="2" opacity="0.5">
+        <!-- Connect Layer 1 to Layer 2 -->
+        <path d="M250 250 C 325 225, 325 175, 400 200" stroke="url(#neuralGradient)"/>
+        <path d="M250 250 C 325 275, 325 275, 400 300" stroke="url(#neuralGradient)"/>
+        <path d="M250 350 C 325 325, 325 375, 400 400" stroke="url(#neuralGradient)"/>
+        <path d="M250 450 C 325 425, 325 475, 400 500" stroke="url(#neuralGradient)"/>
+        <path d="M250 550 C 325 525, 325 575, 400 600" stroke="url(#neuralGradient)"/>
+        
+        <!-- Connect Layer 2 to Layer 3 -->
+        <path d="M400 200 C 475 225, 475 225, 550 250" stroke="url(#neuralGradient)"/>
+        <path d="M400 300 C 475 325, 475 325, 550 350" stroke="url(#neuralGradient)"/>
+        <path d="M400 400 C 475 425, 475 425, 550 450" stroke="url(#neuralGradient)"/>
+        <path d="M400 500 C 475 525, 475 525, 550 550" stroke="url(#neuralGradient)"/>
+        <path d="M400 600 C 475 575, 475 525, 550 550" stroke="url(#neuralGradient)"/>
+    </g>
+    
+    <!-- Pulse animations -->
+    <circle cx="400" cy="400" r="180" fill="none" stroke="url(#neuralGradient)" stroke-width="2" opacity="0.2">
+        <animate attributeName="r" from="180" to="200" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" from="0.2" to="0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="400" r="160" fill="none" stroke="url(#neuralGradient)" stroke-width="2" opacity="0.15">
+        <animate attributeName="r" from="160" to="180" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" from="0.15" to="0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+    </circle>
+</svg>

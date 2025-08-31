@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="js/terminal.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+    <script src="js/brain-interaction.js" defer></script>
     <script>
         tailwind.config = {
             theme: {
@@ -95,6 +97,26 @@
         .neon-border-purple {
             border: 1px solid #a855f7;
             box-shadow: 0 0 5px #a855f7, inset 0 0 5px #a855f7;
+        }
+
+        #brain-container {
+            cursor: pointer;
+            transition: filter 0.3s ease;
+        }
+
+        #brain-container:hover {
+            filter: drop-shadow(0 0 5px #06b6d4);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0); }
+            25% { transform: translate(-3px, -3px) rotate(-1deg); }
+            50% { transform: translate(3px, -3px) rotate(1deg); }
+            75% { transform: translate(-3px, 3px) rotate(-1deg); }
+        }
+
+        .shake-animation {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) infinite;
         }
         
         .neon-border-cyan {
@@ -388,22 +410,51 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="md:w-1/2 mb-10 md:mb-0 fade-in">
-                    <h1 class="text-4xl md:text-6xl font-bold mb-4 neon-text-cyan">AI/ML DEVELOPER</h1>
-                    <div class="text-xl md:text-2xl mb-6 min-h-[3rem]">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                        <span class="neon-text-cyan">AI/ML</span>
+                        <span class="block mt-2">DEVELOPER</span>
+                    </h1>
+                    <div class="text-xl md:text-2xl mb-6 min-h-[3rem] font-light">
                         <span id="typewriter" class="neon-text-purple"></span>
                         <span class="blinking-cursor">|</span>
                     </div>
-                    <p class="text-gray-300 mb-8">Crafting intelligent solutions with cutting-edge machine learning algorithms and neural networks. Passionate about transforming data into actionable insights.</p>
-                    <div class="flex space-x-4">
-                        <a href="#projects" class="px-6 py-3 bg-transparent neon-border-cyan text-white rounded-lg glow-hover">View Projects</a>
-                        <a href="#contact" class="px-6 py-3 bg-neon-purple text-white rounded-lg glow-hover">Get In Touch</a>
+                    <p class="text-gray-300 mb-8 text-lg leading-relaxed">
+                        Transforming complex data into intelligent solutions. Specializing in machine learning, 
+                        deep neural networks, and artificial intelligence applications that drive innovation.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
+                        <a href="#projects" class="px-8 py-4 bg-transparent border-2 border-neon-cyan text-white rounded-lg hover:bg-neon-cyan hover:text-black transition-all duration-300 text-center">
+                            Explore Projects
+                        </a>
+                        <a href="#contact" class="px-8 py-4 bg-neon-purple text-white rounded-lg hover:bg-neon-cyan transition-all duration-300 text-center">
+                            Let's Connect
+                        </a>
                     </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center fade-in">
-                    <div class="relative w-full max-w-md">
-                        <!-- Neural network visualization removed -->
+                    <div class="relative flex justify-center items-center">
+                        <div class="absolute inset-0 bg-gradient-to-r from-neon-purple to-neon-cyan opacity-10 blur-3xl rounded-full"></div>
+                        <div id="brain-container" 
+                             class="relative z-10"
+                             style="width: 300px; height: 300px;">
+                            <dotlottie-wc 
+                                id="brain-animation"
+                                src="https://lottie.host/f3fd9b4f-d20d-49e4-b6b5-a7cb82ff997b/hS2kFfbw0e.json" 
+                                class="w-full h-full"
+                                speed="1" 
+                                autoplay 
+                                loop>
+                            </dotlottie-wc>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <a href="#about" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
@@ -413,7 +464,16 @@
     <section id="terminal" class="py-16 bg-gray-900 bg-opacity-70">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-8 neon-text-cyan">INTERACTIVE TERMINAL</h2>
-            <div class="max-w-3xl mx-auto terminal-text font-mono">
+            <div class="relative max-w-3xl mx-auto">
+                <div class="absolute -top-12 -left-4 z-10" style="width: 100px; height: 100px;">
+                    <dotlottie-wc 
+                        src="https://lottie.host/dc7ef390-89c8-4389-b59b-f75c01b33f6a/XQ6hugy9NQ.json" 
+                        speed="1" 
+                        autoplay 
+                        loop>
+                    </dotlottie-wc>
+                </div>
+                <div class="terminal-text font-mono">
                 <div class="terminal-header">
                     <div class="terminal-dot close"></div>
                     <div class="terminal-dot minimize"></div>
@@ -432,33 +492,108 @@
     </section>
     
     <!-- Projects Section -->
-    <section id="projects" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 neon-text-purple">PROJECT SHOWCASE</h2>
+    <section id="projects" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-neon-purple/5 to-transparent"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 neon-text-purple">Featured Projects</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Showcasing innovative solutions in artificial intelligence and machine learning</p>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Project 1 -->
-                <div class="project-card rounded-lg p-6 fade-in">
-                    <div class="text-neon-cyan text-4xl mb-4">🤖</div>
-                    <h3 class="text-xl font-bold mb-2 text-white">Neural Network Framework</h3>
-                    <p class="text-gray-400 mb-4">Custom deep learning framework built from scratch with Python and NumPy.</p>
-                    <button class="text-neon-purple project-detail-btn" data-project="1">View Details →</button>
+                <div class="project-card rounded-xl overflow-hidden fade-in backdrop-blur-sm">
+                    <div class="relative h-48 bg-gradient-to-br from-neon-purple/20 to-neon-cyan/20">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964m-6.097-7.642l-1.149-.964M13.949 2.51l-1.41-.513M4.5 8.923l1.41-.513"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-white">Neural Network Framework</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed">A sophisticated deep learning framework built from scratch, featuring automatic differentiation, various optimization algorithms, and customizable neural architectures.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">Python</span>
+                            <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs rounded-full">NumPy</span>
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">Deep Learning</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-neon-cyan hover:text-white transition-colors flex items-center gap-2 text-sm">
+                                View Project <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </button>
+                            <a href="https://github.com/username/project" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Project 2 -->
-                <div class="project-card rounded-lg p-6 fade-in">
-                    <div class="text-neon-cyan text-4xl mb-4">👁️</div>
-                    <h3 class="text-xl font-bold mb-2 text-white">Computer Vision API</h3>
-                    <p class="text-gray-400 mb-4">Real-time object detection system with TensorFlow and OpenCV.</p>
-                    <button class="text-neon-purple project-detail-btn" data-project="2">View Details →</button>
+                <div class="project-card rounded-xl overflow-hidden fade-in backdrop-blur-sm">
+                    <div class="relative h-48 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-white">Computer Vision API</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed">Real-time object detection and recognition system powered by state-of-the-art deep learning models, optimized for edge deployment.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">TensorFlow</span>
+                            <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs rounded-full">OpenCV</span>
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">Docker</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-neon-cyan hover:text-white transition-colors flex items-center gap-2 text-sm">
+                                View Project <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </button>
+                            <a href="https://github.com/username/project" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Project 3 -->
-                <div class="project-card rounded-lg p-6 fade-in">
-                    <div class="text-neon-cyan text-4xl mb-4">💬</div>
-                    <h3 class="text-xl font-bold mb-2 text-white">NLP Chatbot</h3>
-                    <p class="text-gray-400 mb-4">AI-powered conversational agent using transformer architectures.</p>
-                    <button class="text-neon-purple project-detail-btn" data-project="3">View Details →</button>
+                <div class="project-card rounded-xl overflow-hidden fade-in backdrop-blur-sm">
+                    <div class="relative h-48 bg-gradient-to-br from-neon-purple/20 to-neon-cyan/20">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-white">NLP Chatbot</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed">Advanced conversational AI system utilizing transformer architectures for natural language understanding and generation.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">PyTorch</span>
+                            <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs rounded-full">Transformers</span>
+                            <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full">FastAPI</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="text-neon-cyan hover:text-white transition-colors flex items-center gap-2 text-sm">
+                                View Project <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </button>
+                            <a href="https://github.com/username/project" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="https://github.com/yourusername" target="_blank" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    View More Projects
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
