@@ -354,15 +354,15 @@
     
     <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-gray-900 bg-opacity-80 backdrop-blur-sm z-50 border-b border-neon-purple">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <a href="#" class="text-xl font-bold neon-text-purple">DEV_AI</a>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-white hover:text-neon-cyan transition-colors">Home</a>
-                    <a href="#terminal" class="text-white hover:text-neon-cyan transition-colors">Terminal</a>
-                    <a href="#projects" class="text-white hover:text-neon-cyan transition-colors">Projects</a>
-                    <a href="#skills" class="text-white hover:text-neon-cyan transition-colors">Skills</a>
-                    <a href="#contact" class="text-white hover:text-neon-cyan transition-colors">Contact</a>
+        <div class="container mx-auto px-3">
+            <div class="flex justify-between items-center py-2">
+                <a href="#" class="text-lg font-bold neon-text-purple">DEV_AI</a>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="text-sm text-white hover:text-neon-cyan transition-colors">Home</a>
+                    <a href="#terminal" class="text-sm text-white hover:text-neon-cyan transition-colors">Terminal</a>
+                    <a href="#projects" class="text-sm text-white hover:text-neon-cyan transition-colors">Projects</a>
+                    <a href="#skills" class="text-sm text-white hover:text-neon-cyan transition-colors">Skills</a>
+                    <a href="#contact" class="text-sm text-white hover:text-neon-cyan transition-colors">Contact</a>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="text-white focus:outline-none">
@@ -615,92 +615,106 @@
         // Initialize Particles.js
         document.addEventListener('DOMContentLoaded', function() {
             particlesJS('particles-js', {
-                particles: {
-                    number: {
-                        value: 80,
-                        density: {
-                            enable: true,
-                            value_area: 800
+                "particles": {
+                    "number": {
+                        "value": 120,
+                        "density": {
+                            "enable": true,
+                            "value_area": 1000
                         }
                     },
-                    color: {
-                        value: "#a855f7"
+                    "color": {
+                        "value": ["#a855f7", "#06b6d4", "#3b82f6", "#ec4899"]
                     },
-                    shape: {
-                        type: "circle",
-                        stroke: {
-                            width: 0,
-                            color: "#000000"
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
                         }
                     },
-                    opacity: {
-                        value: 0.5,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 1,
-                            opacity_min: 0.1,
-                            sync: false
+                    "opacity": {
+                        "value": 0.8,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1.5,
+                            "opacity_min": 0.3,
+                            "sync": false
                         }
                     },
-                    size: {
-                        value: 3,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 2,
-                            size_min: 0.3,
-                            sync: false
+                    "size": {
+                        "value": 1.8,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 3,
+                            "size_min": 0.2,
+                            "sync": false
                         }
                     },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#06b6d4",
-                        opacity: 0.4,
-                        width: 1
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#fff",
+                        "opacity": 0.4,
+                        "width": 0.8
                     },
-                    move: {
-                        enable: true,
-                        speed: 1,
-                        direction: "none",
-                        random: true,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false,
-                        attract: {
-                            enable: false,
-                            rotateX: 600,
-                            rotateY: 1200
+                    "move": {
+                        "enable": true,
+                        "speed": 6,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
                         }
                     }
                 },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: {
-                            enable: true,
-                            mode: "grab"
+                "interactivity": {
+                    "detect_on": "window",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": ["repulse", "bubble"]
                         },
-                        onclick: {
-                            enable: true,
-                            mode: "push"
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
                         },
-                        resize: true
+                        "resize": true
                     },
-                    modes: {
-                        grab: {
-                            distance: 140,
-                            line_linked: {
-                                opacity: 1
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
                             }
                         },
-                        push: {
-                            particles_nb: 4
+                        "bubble": {
+                            "distance": 200,
+                            "size": 3,
+                            "duration": 0.4,
+                            "opacity": 0.8,
+                            "speed": 6
+                        },
+                        "repulse": {
+                            "distance": 150,
+                            "duration": 0.2
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
                         }
                     }
                 },
-                retina_detect: true
+                "retina_detect": true
             });
             
             // Modern Combat Style Typewriter Effect
